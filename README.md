@@ -1,2 +1,5 @@
 # discord_bot
-The different branches will be the previous and current versions of my discord bot
+Initial version of the discord bot which:
+-Plays youtube links
+-Plays two soundbytes from a local directory
+-Contains a help function
