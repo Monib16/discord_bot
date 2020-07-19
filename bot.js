@@ -1,6 +1,6 @@
 //Written By: Monib Baray
-//Last Updated: 5/11/2020, 7:53pm
-//Version 1.1
+//Last Updated: 5/11/2020, 12:51AM
+//Version 1.0.0
 
 //import all dependencies
 const Discord = require('discord.js')
@@ -12,7 +12,7 @@ const client = new Discord.Client();
 const queue = new Map();
 
 
-//Basic listeners that output to console its status
+//Basic listeners
 client.once('ready', () => {console.log('Ready!');});
 client.once('reconnecting', () => {console.log('Reconnecting');});
 client.once('disconnect', () => {console.log('Disconnect!');});
@@ -50,11 +50,8 @@ client.on('message', async message => {
     else if (message.content.startsWith(`${prefix}soundbytes`)) {
         soundbytes(message, serverQueue);
     }
-    else if (message.content.startsWith(`${prefix}scream`)) {
-        scream(message, serverQueue);
-    }
-    else if (message.content.startsWith(`${prefix}baby`)) {
-        baby(message, serverQueue);
+    else if (message.content.startsWith(`${prefix}frustration`)) {
+        frustration(message, serverQueue);
     }
     else
     {
@@ -62,7 +59,6 @@ client.on('message', async message => {
     }
 });
 
-//this is meant as a helper function that eventually calls play
 async function execute(message, serverQueue)
 {
     const args = message.content.split(" ");
@@ -110,8 +106,6 @@ async function execute(message, serverQueue)
         return message.channel.send(`${song.title} has been added to the queue!`);
     }
 } //end execute
-
-//intendented functionality: skip the song and go to the next in queue *or* leave the channel if there is no song to skip
 async function skip(message, serverQueue)
 {
     if(!message.member.voice.channel)
@@ -121,27 +115,22 @@ async function skip(message, serverQueue)
     serverQueue.connection.dispatcher.end() ;
 } //end skip
 
-//sends a tutorial message in the specificed text channel
 async function help(message, serverQueue)
 {
     return message.channel.send(
             "This bot is made to play music from youtube or sound bytes from a local folder. The following commands are currently available:" +
-            `\n**!play {youtube url}**: The bot will join your current voice channel and play *youtube url*` +
+            `\n**!play youtube url**: The bot will join your current voice channel and play *youtube url*` +
             `\n**!skip**: This will skip the current song and move to the next song in queue (if there are no more songs, the bot will leave)` +
             `\n**!leave**: This will cause the bot to leave the voice channel` +
-            `\n**!soundbytes**: This will list all possible sound bytes the bot can play` +
-            `\nIf you want to request an audiobyte, please @ Monib and he'll get on it right away! <:monibW:513647461898911744> `
+            `\n**!soundbytes**: This will list all possible sound bytes the bot can play`
         )
 } //end help
 
-//lists all soundbytes currently available 
 async function soundbytes(message, serverQueue)
 {
     return message.channel.send(
             "The following soundbytes are currently available:" +
-            `\n**!bad**: This will play the soundbyte from *Recess* where Vince says "and when i say bad, I mean actually bad"` +
-            `\n**!scream**: This will play sanfords infamous frustrated scream` +
-            `\n**!baby**: This will play Lawson's baby piglet impression`
+            `\n**!bad**: This will play the soundbyte from *Recess* where Vince says "and when i say bad, I mean actually bad"`
         )
 } //end help
 
@@ -161,7 +150,7 @@ function play(guild, song)
             play(guild, serverQueue.songs[0]);
         })
         .on("error", error => console.error(error));
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 8);
+    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
 } //end play
 
@@ -169,21 +158,16 @@ async function bad(message, serverQueue)
 {
     if (!message.member.voice.channel)
         return message.channel.send("You have to be in a voice channel to play audio bytes");
-    if(!serverQueue)
+    var voiceChannel = message.member.voice.channel;
+    voiceChannel.join().then(connection => 
     {
-        var voiceChannel = message.member.voice.channel;
-        voiceChannel.join().then(connection => 
-        {
-            const dispatcher = connection.play('./Audio/bad.mp3');
-            dispatcher.on('finish', () => 
-            {
-                connection.disconnect();
-            });
-        }).catch(err => console.log(err));
-    }
+        const dispatcher = connection.play('./Audio/bad.mp3');
+        //dispatcher.on("end", end => {voiceChannel.leave();});
+    }).catch(err => console.log(err));
+
 } //end bad
 
-async function scream(message, serverQueue)
+async function frustration(message, serverQueue)
 {
     if (!message.member.voice.channel)
         return message.channel.send("You have to be in a voice channel to play audio bytes");
@@ -191,29 +175,9 @@ async function scream(message, serverQueue)
     voiceChannel.join().then(connection => 
     {
         const dispatcher = connection.play('./Audio/frustration.wav');
-        dispatcher.on('finish', () => 
-        {
-            connection.disconnect();
-        });
     }).catch(err => console.log(err));
     
-} //end scream
-
-async function baby(message, serverQueue)
-{
-    if (!message.member.voice.channel)
-        return message.channel.send("You have to be in a voice channel to play audio bytes");
-    var voiceChannel = message.member.voice.channel;
-    voiceChannel.join().then(connection => 
-    {
-        const dispatcher = connection.play('./Audio/baby.mp3');
-        dispatcher.on('finish', () => 
-        {
-            connection.disconnect();
-        });
-    }).catch(err => console.log(err));
-    
-} //end scream
+} //end bad
 
 async function leave(message, serverQueue)
 {
@@ -225,3 +189,4 @@ async function leave(message, serverQueue)
 } //end leave
 
 client.login(token);
+
