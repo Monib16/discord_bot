@@ -1,8 +1,2 @@
-# discordbot-v1.0
-Initial version of the discord bot which:
-
--Plays youtube links
-
--Plays two soundbytes from a local directory
-
--Contains a help function
+# Monib's Discord Bot
+This is my discord bot, disclaimer that I used this as a way to learn NodeJS, so a lot of things might look really ugly. I'm trying to improve the general code with each new release as I learn more!
