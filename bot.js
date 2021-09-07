@@ -1,6 +1,6 @@
 //Written By: Monib Baray
-//Last Updated: 9/11/2020, 5:10pm
-//Version 1.2
+//Last Updated: 3/15/2020
+//Version 1.3
 
 //import all dependencies
 const Discord = require('discord.js')
